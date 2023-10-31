@@ -12,11 +12,13 @@
 - */3 Populating the table
 
 2. How long, in hours, did it take you to complete this assignment?
-
+running tally: 3
 
 
 3. What online resources did you consult when completing this assignment? (list sites like StackOverflow or specific URLs for tutorials, etc.)
-
+StackOverflow
+developer.mozilla.org : javascript help
+learn.jquery.com : jquery help
 
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?

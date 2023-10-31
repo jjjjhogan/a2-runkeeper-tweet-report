@@ -12,6 +12,20 @@ function parseTweets(runkeeper_tweets) {
 	//This line modifies the DOM, searching for the tag with the numberTweets ID and updating the text.
 	//It works correctly, your task is to update the text of the other tags in the HTML file!
 	document.getElementById('numberTweets').innerText = tweet_array.length;	
+	
+	//code to find the first and last date. applying math.min or math.max to all dates in tweet_array
+	var firstDate = new Date(Math.min.apply(null, tweet_array.map(function(e) {
+		return new Date(e.time.toLocaleDateString());
+	  })));
+	
+	var lastDate = new Date(Math.max.apply(null, tweet_array.map(function(e) {
+		return new Date(e.time.toLocaleDateString());
+	  })));
+	
+	$('span#firstDate').html(firstDate.toDateString());
+	$('span#lastDate').html(lastDate.toDateString())
+	
+	
 }
 
 //Wait for the DOM to load
