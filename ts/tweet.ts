@@ -10,12 +10,40 @@ class Tweet {
 	//returns either 'live_event', 'achievement', 'completed_event', or 'miscellaneous'
     get source():string {
         //TODO: identify whether the source is a live event, an achievement, a completed event, or miscellaneous.
-        return "unknown";
+        
+        //live event
+        if(this.text.toLowerCase().startsWith("watch my"))
+        {
+            return "live_event";
+        }
+        //achievement
+        else if(this.text.toLowerCase().startsWith("achieved") ||
+            this.text.toLowerCase().includes("set a goal"))
+        {
+            return "achievement";
+        }
+        //completed event
+        else if (this.text.toLowerCase().startsWith("just completed") || 
+            this.text.toLowerCase().startsWith("just posted") ||
+            this.text.toLowerCase().startsWith("completed"))
+        {
+            return "completed_event"
+        }
+        //miscellaneous
+        else {
+            return "miscellaneous";
+        }
+        
     }
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
     get written():boolean {
         //TODO: identify whether the tweet is written
+        if(this.text.includes("-")){
+            return true;
+        }
+
+        console.log(this.text);
         return false;
     }
 

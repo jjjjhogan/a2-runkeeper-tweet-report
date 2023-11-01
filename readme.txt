@@ -19,6 +19,8 @@ running tally: 3
 StackOverflow
 developer.mozilla.org : javascript help
 learn.jquery.com : jquery help
+w3schools.com : javascript and typescript functions and methodology
+https://pietschsoft.com/post/2015/09/05/javascript-basics-how-to-create-a-dictionary-with-keyvalue-pairs
 
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
