@@ -12,7 +12,7 @@
 - */3 Populating the table
 
 2. How long, in hours, did it take you to complete this assignment?
-running tally: 3
+running tally: 7
 
 
 3. What online resources did you consult when completing this assignment? (list sites like StackOverflow or specific URLs for tutorials, etc.)
@@ -24,7 +24,7 @@ https://pietschsoft.com/post/2015/09/05/javascript-basics-how-to-create-a-dictio
 
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
-
+just myself and the internet
 
 
 5. Is there anything special we need to know in order to run your code?

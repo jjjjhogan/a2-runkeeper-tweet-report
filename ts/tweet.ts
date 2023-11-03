@@ -27,6 +27,9 @@ class Tweet {
             this.text.toLowerCase().startsWith("just posted") ||
             this.text.toLowerCase().startsWith("completed"))
         {
+           // if(!this.text.includes("walk") && !this.text.includes("run") && !this.text.includes("bike") && !this.text.includes("workout") && !this.text.includes("hike")  ){
+             //   console.log(this.text);
+            //}
             return "completed_event"
         }
         //miscellaneous
@@ -43,7 +46,6 @@ class Tweet {
             return true;
         }
 
-        console.log(this.text);
         return false;
     }
 
@@ -52,7 +54,9 @@ class Tweet {
             return "";
         }
         //TODO: parse the written text from the tweet
-        return "";
+        let startIndex = this.text.indexOf("-") +1;
+        let endIndex = this.text.indexOf("https");
+        return this.text.substring(startIndex,endIndex);
     }
 
     get activityType():string {
@@ -60,7 +64,79 @@ class Tweet {
             return "unknown";
         }
         //TODO: parse the activity type from the text of the tweet
-        return "";
+        if(this.text.search(/swim/gi) > 0)
+        {
+            return "swim";
+        }
+        else if(this.text.search(/ run/gi) > 0)
+        {
+            return "run";
+        }
+        else if(this.text.search(/walk/gi) > 0)
+        {
+            return "walk";
+        }
+        else if(this.text.search(/hike/gi) > 0)
+        {
+            return "hike";
+        }
+        else if(this.text.search(/bike/gi) > 0)
+        {
+            return "bike";
+        }
+        else if(this.text.search(/yoga/gi) > 0)
+        {
+            return "yoga";
+        }
+        else if(this.text.search(/freestyle/gi) > 0)
+        {
+            return "freestyle";
+        }       
+        else if(this.text.search(/skate/gi) > 0)
+        {
+            return "skate";
+        }
+        else if(this.text.search(/row/gi) > 0)
+        {
+            return "row";
+        }
+        else if(this.text.search(/workout/gi) > 0 || (this.text.search(/gym/gi) > 0))
+        {
+            return "workout";
+        }
+
+        else if(this.text.search(/chair/gi) > 0 && this.text.search(/ride/gi) > 0)
+        {
+            return "chair ride";
+        }
+        else if(this.text.search(/dance/gi) > 0)
+        {
+            return "dance";
+        }
+        else if(this.text.search(/sport/gi) > 0)
+        {
+            return "sports";
+        }
+        else if(this.text.search(/pilate/gi) > 0)
+        {
+            return "pilates";
+        }
+        else if(this.text.search(/snowboard/gi) > 0 || (this.text.search(/ski/gi) > 0))
+        {
+            return "snowsport";
+        }
+        else if(this.text.search(/boxing/gi) > 0)
+        {
+            return "boxing";
+        }
+        else if(this.text.search(/meditation/gi) > 0)
+        {
+            return "meditation";
+        }
+        return "activity";
+        
+        //types: run, walk, hike, workout, bike, swim, yoga, 'activity', mysports freestyle,
+        // skate, row, chair ride, dance, sports, pilates, snowboard, gym, meditation, boxing, 
     }
 
     get distance():number {
