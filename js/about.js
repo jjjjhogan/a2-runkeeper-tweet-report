@@ -34,49 +34,30 @@ function parseTweets(runkeeper_tweets) {
 	};
 
 
-	//types: run, walk, hike, workout, bike, swim, yoga, 'activity', mysports freestyle,
-    // skate, row, chair ride, dance, sports, pilates, snowboard, gym, meditation, boxing, 
-	var activityDict = {"run": 0,
-						"walk": 0,
-						"hike": 0,
-						"workout": 0,
-						"bike": 0,
-						"swim": 0,
-						"yoga": 0,
-						"freestyle": 0,
-						"skate": 0,
-						"row": 0,
-						"chair ride": 0,
-						"dance": 0,
-						"pilates": 0,
-						"snowsport": 0,
-						"meditation": 0,
-						"boxing": 0,
-						"sports": 0,
-						"activity": 0
-						
-	};
 
 	var writtenCompletedEvents = 0;
+
+	//loop through all tweets and parse relevant information
 	for(let i = 0; i < tweet_array.length; i++ ){
-		let category = tweet_array[i].source;
-		let activity = tweet_array[i].activityType;
-		activityDict[activity]++;
-		tweet_array[i].activityType;
+		let category = tweet_array[i].source; 
+		categoryDict[category] ++;
+
 		if(category=="completed_event" && tweet_array[i].written){
 			writtenCompletedEvents ++;
 		}
-		categoryDict[category] ++;
 	}
-	console.log(activityDict)
+
+	function pctOfTweets(category){
+		return((categoryDict[category]/totalTweets * 100).toFixed(2));
+	}
+
+	//update span of index.html
 	$('span.completedEvents').html(categoryDict["completed_event"]);
 	$('span.liveEvents').html(categoryDict["live_event"]);
 	$('span.achievements').html(categoryDict["achievement"]);
 	$('span.miscellaneous').html(categoryDict["miscellaneous"]);
 
-	function pctOfTweets(category){
-		return((categoryDict[category]/totalTweets * 100).toFixed(2));
-	}
+
 	$('span.completedEventsPct').html(pctOfTweets("completed_event") + "%");
 	$('span.liveEventsPct').html(pctOfTweets("live_event") + "%");
 	$('span.achievementsPct').html(pctOfTweets("achievement") + "%");

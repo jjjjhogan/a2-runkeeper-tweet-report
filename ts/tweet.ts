@@ -27,9 +27,6 @@ class Tweet {
             this.text.toLowerCase().startsWith("just posted") ||
             this.text.toLowerCase().startsWith("completed"))
         {
-           // if(!this.text.includes("walk") && !this.text.includes("run") && !this.text.includes("bike") && !this.text.includes("workout") && !this.text.includes("hike")  ){
-             //   console.log(this.text);
-            //}
             return "completed_event"
         }
         //miscellaneous
@@ -143,8 +140,38 @@ class Tweet {
         if(this.source != 'completed_event') {
             return 0;
         }
+
         //TODO: prase the distance from the text of the tweet
-        return 0;
+        let text: string = this.text;
+        let regexKm: RegExp = /[0-9]*\.[0-9]+\s+km/i;
+        let regexMi: RegExp = /[0-9]*\.[0-9]+\s+mi/i;
+        let regexDis: RegExp = /[0-9]*\.[0-9]+/i;
+        let distanceNum:number = 0;
+        let distanceArr;
+
+        if(regexKm.test(text)){
+            distanceArr = regexDis.exec(text);
+            
+            if(distanceArr){
+                distanceNum = +distanceArr[0];
+                distanceNum /= 1.609;
+            }
+        }
+
+        if(regexMi.test(text)) {
+            distanceArr = regexDis.exec(text);
+            if(distanceArr){
+                distanceNum = +distanceArr[0];
+                
+            }
+        }
+        
+        
+
+        
+       
+
+        return distanceNum;
     }
 
     getHTMLTableRow(rowNumber:number):string {
