@@ -8,14 +8,8 @@ function parseTweets(runkeeper_tweets) {
 	tweet_array = runkeeper_tweets.map(function(tweet) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
-
-	var weekArray = [{"day":"Sunday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Monday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Tuesday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Wednesday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Thursday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Friday", "walk_dis": [], "run_dis": [], "bike_dis": []},
-					{"day":"Saturday", "walk_dis": [], "run_dis": [], "bike_dis": []}];
+	let weekArray = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+	var weekDict = [];
 
 	//array of dict like objects that store the activity name and how many times its been tweeted about
 	var activityDict = [{"activity": "run", "amount": 0},
@@ -50,23 +44,14 @@ function parseTweets(runkeeper_tweets) {
 		if(category == "completed_event"){
 			let day = tweet_array[i].time.getDay();
 			let dist = tweet_array[i].distance;
-			if(activity == "run"){
-				weekArray[day]["run_dis"].push(dist);
-			}
-			
-			if (activity == "walk"){
-				weekArray[day]["walk_dis"].push(dist);
-			}
-			
-			if (activity== "bike"){
-				weekArray[day]["bike_dis"].push(dist);
-
-			}
+		
+			if(activity == "run" || activity == "walk" || activity=="bike"){
+				weekDict.push({"activity_type":activity, "distance":dist, "day":weekArray[day]});
+			}	
 
 		}
 
 	}
-	console.log(weekArray);
 	activityDict = activityDict.sort((a, b) => b["amount"]- a["amount"]);
 	
 	activity_vis_spec = {
@@ -94,39 +79,123 @@ function parseTweets(runkeeper_tweets) {
 	let firstMost = activityDict[0]["activity"];
 	let secondMost = activityDict[1]["activity"];
 	let thirdMost = activityDict[2]["activity"];
+
+	//span changing dynamically to values of activityDict
+	$('span#numberActivities').html(activityDict.length);
 	$('span#firstMost').html(firstMost);
 	$('span#secondMost').html(secondMost);
 	$('span#thirdMost').html(thirdMost);
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
-	week_vis_spec = {
+	//all activity specification
+	week_vis_spec1 = {
 		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 		"description": "A graph of the number of Tweets containing each type of activity.",
 		"data": {
-		  "values": weekArray
+		  "values": weekDict
 		},
 		//TODO: Add mark and encoding
 		"mark": "point",
 		"encoding": {
 		  "x": { 
 			  "field": "day",
-			  "type": "nominal",
+			  "type": "ordinal",
+			  "scale": {
+				"domain": [
+				  "Sun", 
+				  "Mon", 
+				  "Tue", 
+				  "Wed", 
+				  "Thu",
+				  "Fri",
+				  "Sat"
+				]
+			}
 		  },
   
 		  "y": {
-			  "field": "walk_dis",
+			  "field": "distance",
 			  "type": "quantitative",
-		  }
-		  
+		  },
+
+		  "color": {"field": "activity_type", "type": "nominal"},
 		},
-		"transform": [
-			{"flatten": "walk_dis"} 
-		],
+		
 	  };
-	  vegaEmbed('#distanceVis', week_vis_spec, {actions:false});
+	  //average specification
+	  week_vis_spec2 = {
+		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+		"description": "A graph of the number of Tweets containing each type of activity.",
+		"data": {
+		  "values": weekDict
+		},
+
+		//TODO: Add mark and encoding
+		"mark": "point",
+		"encoding": {
+		  "x": { 
+			  "field": "day",
+			  "type": "ordinal",
+			  "scale": {
+				"domain": [
+				  "Sun", 
+				  "Mon", 
+				  "Tue", 
+				  "Wed", 
+				  "Thu",
+				  "Fri",
+				  "Sat"
+				]
+			}
+		  },
+  
+		  "y": {
+			  "aggregate": "average",
+			  "field": "distance",
+			  "type": "quantitative",
+		  },
+		  
+
+		  "color": {"field": "activity_type", "type": "nominal"},
+		},
+		
+
+		
+	  };
+
+
+	week_vis_spec =week_vis_spec1;
+	let isMeanVisual = false;
+	vegaEmbed('#distanceVis', week_vis_spec, {actions:false});
+	function swap_vis(){
+		isMeanVisual = !isMeanVisual;
+		if(isMeanVisual){
+			$('#aggregate').html("Show all activities");
+			week_vis_spec = week_vis_spec2;
+		}
+		else{
+			week_vis_spec = week_vis_spec1;
+			$('#aggregate').html("Show means");
+		}
+		vegaEmbed('#distanceVis', week_vis_spec, {actions:false});
+	}
+
+	$('main').on('click',"#aggregate",function(){
+		swap_vis();
+	});
+	
+
+	//hard coded span values based on visualizations
+	$('span#longestActivityType').html("bike");
+	$('span#shortestActivityType').html("walk");
+	$('span#weekdayOrWeekendLonger').html("the weekend");
+
+
 
 }
+
+
 
 //Wait for the DOM to load
 document.addEventListener('DOMContentLoaded', function (event) {
