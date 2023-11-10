@@ -9,82 +9,123 @@ function parseTweets(runkeeper_tweets) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
 
+	var weekArray = [{"day":"Sunday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Monday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Tuesday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Wednesday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Thursday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Friday", "walk_dis": [], "run_dis": [], "bike_dis": []},
+					{"day":"Saturday", "walk_dis": [], "run_dis": [], "bike_dis": []}];
+
+	//array of dict like objects that store the activity name and how many times its been tweeted about
+	var activityDict = [{"activity": "run", "amount": 0},
+						{"activity": "walk", "amount": 0},
+						{"activity": "hike", "amount": 0},
+						{"activity": "workout", "amount": 0},
+						{"activity": "bike", "amount": 0},
+						{"activity": "swim", "amount": 0},
+						{"activity": "yoga", "amount": 0},
+						{"activity": "freestyle", "amount": 0},
+						{"activity": "skate", "amount": 0},
+						{"activity": "row", "amount": 0},
+						{"activity": "chair ride", "amount": 0},
+						{"activity": "dance", "amount": 0},
+						{"activity": "pilates", "amount": 0},
+						{"activity": "snowsport", "amount" : 0},
+						{"activity": "meditation", "amount": 0},
+						{"activity": "boxing", "amount": 0},
+						{"activity":"sports", "amount": 0},
+						{"activity": "activity", "amount": 0}];
+
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
-
-	activity_vis_spec = {
-	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-	  "description": "A graph of the number of Tweets containing each type of activity.",
-	  "data": {
-	    "values": tweet_array
-	  },
-	  //TODO: Add mark and encoding
-	  "mark": "circle",
-	  "encoding": {
-		"x": { 
-			"bin": true,
-			"type": "quantitative",
-			"field": "Day of the week",
-		},
-
-		"y": {
-			"bin": true,
-			"type": "quantitative",
-			"field": "Day of the week",
-		}
-	  }
-	};
-	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
-
-	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
-	//Use those visualizations to answer the questions about which activities tended to be longest and when.
-	
-	//types: run, walk, hike, workout, bike, swim, yoga, 'activity', mysports freestyle,
-    // skate, row, chair ride, dance, sports, pilates, snowboard, gym, meditation, boxing, 
-	var activityDict = {"run": 0,
-						"walk": 0,
-						"hike": 0,
-						"workout": 0,
-						"bike": 0,
-						"swim": 0,
-						"yoga": 0,
-						"freestyle": 0,
-						"skate": 0,
-						"row": 0,
-						"chair ride": 0,
-						"dance": 0,
-						"pilates": 0,
-						"snowsport": 0,
-						"meditation": 0,
-						"boxing": 0,
-						"sports": 0,
-						"activity": 0
-						
-	};
-
-	
 	for(let i = 0; i < tweet_array.length; i++ ){
 		let activity = tweet_array[i].activityType;
 		let category = tweet_array[i].source; 
-		var distance;
 		
-		activityDict[activity]++;
+		for( let u = 0; u < activityDict.length; u++){
+			if (activityDict[u]["activity"]==activity){
+				activityDict[u]["amount"] ++;
+			}
+		}
 		if(category == "completed_event"){
-			distance = tweet_array[i].distance;
+			let day = tweet_array[i].time.getDay();
+			let dist = tweet_array[i].distance;
+			if(activity == "run"){
+				weekArray[day]["run_dis"].push(dist);
+			}
+			
+			if (activity == "walk"){
+				weekArray[day]["walk_dis"].push(dist);
+			}
+			
+			if (activity== "bike"){
+				weekArray[day]["bike_dis"].push(dist);
+
+			}
 
 		}
 
 	}
-	var firstMost, secondMost, thirdMost = 0;
-	const sortable = Object.fromEntries(
-		Object.entries(activityDict).sort(([,a],[,b]) => b-a)
-	);
-	firstMost = Object.entries(sortable)[0][0];
-	secondMost = Object.entries(sortable)[1][0];
-	thirdMost = Object.entries(sortable)[2][0];
-	$('span#numberActivities').html(Object.entries(activityDict).length);
+	console.log(weekArray);
+	activityDict = activityDict.sort((a, b) => b["amount"]- a["amount"]);
+	
+	activity_vis_spec = {
+	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "A graph of the number of Tweets containing each type of activity.",
+	  "data": {
+	    "values": activityDict
+	  },
+	  
+	  //TODO: Add mark and encoding
+	  "mark": "bar",
+	  "encoding": {
+		"x": { 
+			"field": "activity",
+			"type": "nominal",
+		},
+
+		"y": {
+			"field": "amount",
+			"type": "quantitative",
+		}
+	  }
+	};
+	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
+	let firstMost = activityDict[0]["activity"];
+	let secondMost = activityDict[1]["activity"];
+	let thirdMost = activityDict[2]["activity"];
 	$('span#firstMost').html(firstMost);
 	$('span#secondMost').html(secondMost);
 	$('span#thirdMost').html(thirdMost);
+
+	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
+	//Use those visualizations to answer the questions about which activities tended to be longest and when.
+	week_vis_spec = {
+		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+		"description": "A graph of the number of Tweets containing each type of activity.",
+		"data": {
+		  "values": weekArray
+		},
+		//TODO: Add mark and encoding
+		"mark": "point",
+		"encoding": {
+		  "x": { 
+			  "field": "day",
+			  "type": "nominal",
+		  },
+  
+		  "y": {
+			  "field": "walk_dis",
+			  "type": "quantitative",
+		  }
+		  
+		},
+		"transform": [
+			{"flatten": "walk_dis"} 
+		],
+	  };
+	  vegaEmbed('#distanceVis', week_vis_spec, {actions:false});
+
 }
 
 //Wait for the DOM to load
